@@ -4,6 +4,8 @@
 #include <string>
 using namespace std;
 
+
+// Coordinate class
 class Coordinate
 {
 private:
@@ -13,20 +15,22 @@ public:
     // constructor
     Coordinate(int x, int y) : x(x), y(y) {}
 
+    // getter functions
     int getX() const { return x; }
     int getY() const { return y; }
 
+    // distance functio
     double distance(const Coordinate &p) const
     {
         return sqrt(pow(p.x - x, 2) + pow(p.y - y, 2));
     }
-
+    // translate function
     void translate(int dx, int dy)
     {
         x += dx;
         y += dy;
     }
-
+    // scale function
     void scale(int factor, bool sign)
     {
         if (sign)
@@ -40,19 +44,22 @@ public:
             y /= factor;
         }
     }
-
+    // display function
     string display() const
     {
         return "X = " + to_string(x) + " Y = " + to_string(y);
     }
 };
 
+// Shape class
 class Shape
 {
 protected:
+    // member variables
     Coordinate position;
     int sides;
 
+    // constructor
 public:
     Shape(int noOfSides, Coordinate coord) : position(coord), sides(noOfSides) {}
 
@@ -66,30 +73,33 @@ public:
     virtual string display() const = 0;
 };
 
+// Rectangle class
 class Rectangle : public Shape
 {
 private:
     int width, length;
-
-public:
+  
+public:   // constructor
     Rectangle(Coordinate coord, int width, int length)
-        : Shape(4, coord), width(width), length(length) {}
+        : Shape(4, coord), width(width), length(length) {} // member functions
 
-    double getArea() const override
+    double getArea() const override // getArea function
     {
         return width * length;
     }
 
-    virtual void translate(int dx, int dy)
+    virtual void translate(int dx, int dy)  
     {
         position.translate(dx, dy);
     }
 
-    double getPerimeter() const override
+    // getPerimeter function
+    double getPerimeter() const override 
     {
         return 2 * (width + length);
     }
 
+    // scale function
     void scale(int factor, bool sign) override
     {
         if (sign)
@@ -103,20 +113,20 @@ public:
             length /= factor;
         }
     }
-
+    // display function
     string display() const override
     {
-        return "Rectangle at " + position.display() + " with width " + to_string(width) +
+        return  "Rectangle at " + position.display() + " with width " + to_string(width) +
                " and length " + to_string(length) + ", Area: " + to_string(getArea()) + ", Perimeter: " + to_string(getPerimeter());
     }
 };
-
+// Square class
 class Square : public Shape
 {
 private:
     int side;
 
-public:
+public: // constructor
     Square(Coordinate coord, int side) : Shape(4, coord), side(side) {}
 
     double getArea() const override
@@ -143,28 +153,29 @@ public:
 
     string display() const override
     {
-        return "Square at " + position.display() + " with side" + to_string(side) + ", Area: " + to_string(getArea()) + ", Perimeter: " + to_string(getPerimeter());
+        return "Square at " + position.display() + " with side " + to_string(side) + ", Area: " + to_string(getArea()) + ", Perimeter: " + to_string(getPerimeter());
     }
 };
-
+// Circle class
 class Circle : public Shape
 {
 private:
     int radius;
-
+    // constructor
 public:
     Circle(Coordinate coord, int radius) : Shape(0, coord), radius(radius) {}
 
     double getArea() const override
     {
-        return M_PI * radius * radius;
+        return M_PI * radius * radius; // M_PI is a constant in cmath representing pi
     }
 
     double getPerimeter() const override
     {
-        return 2 * M_PI * radius;
+        return 2 * M_PI * radius;  
     }
 
+    // scale function
     void scale(int factor, bool sign) override
     {
         if (sign)
@@ -176,38 +187,40 @@ public:
             radius /= factor;
         }
     }
-
+    // display function
     string display() const override
     {
         return "Circle at " + position.display() + " with radius " + to_string(radius) +
                ", Area: " + to_string(getArea()) + ", Perimeter: " + to_string(getPerimeter());
     }
 };
-
+// Triangle class
 class Triangle : public Shape
 {
 private:
-    Coordinate vertex1, vertex2, vertex3;
+    Coordinate vertex1, vertex2, vertex3; // member variables for vertices
 
-public:
+public: // constructor
+
     Triangle(Coordinate v1, Coordinate v2, Coordinate v3) : Shape(3, v1), vertex1(v1), vertex2(v2), vertex3(v3) {}
 
-    double getArea() const override
+    double getArea() const override // getArea function of triangle
     {
-        double a = vertex1.distance(vertex2);
+        double a = vertex1.distance(vertex2); // distance between vertices
         double b = vertex2.distance(vertex3);
         double c = vertex3.distance(vertex1);
-        double s = (a + b + c) / 2;
-        return sqrt(s * (s - a) * (s - b) * (s - c));
+        double s = (a + b + c) / 2; // semi-perimeter
+        return sqrt(s * (s - a) * (s - b) * (s - c)); // area of triangle
     }
 
+    // getPerimeter function
     double getPerimeter() const override
     {
         return vertex1.distance(vertex2) + vertex2.distance(vertex3) + vertex3.distance(vertex1);
     }
 
     void translate(int dx, int dy) override
-    { // Correct the function name here
+    { 
         vertex1.translate(dx, dy);
         vertex2.translate(dx, dy);
         vertex3.translate(dx, dy);
@@ -215,9 +228,9 @@ public:
 
     void scale(int factor, bool sign) override
     {
-        vertex1 = scalePointFrom(vertex1, factor, sign); // Correct the function name here
-        vertex2 = scalePointFrom(vertex2, factor, sign); // Correct the function name here
-        vertex3 = scalePointFrom(vertex3, factor, sign); // Correct the function name here
+        vertex1 = scalePointFrom(vertex1, factor, sign); 
+        vertex2 = scalePointFrom(vertex2, factor, sign); 
+        vertex3 = scalePointFrom(vertex3, factor, sign); 
     }
 
     string display() const override
@@ -227,8 +240,9 @@ public:
     }
 
 private:
+    // helper function to scale the vertices
     Coordinate scalePointFrom(Coordinate point, int factor, bool sign)
-    {                                            // Correct the function name here
+    {                                            
         int dx = point.getX() - position.getX(); // Use the position as center
         int dy = point.getY() - position.getY();
 
@@ -245,14 +259,14 @@ private:
         return Coordinate(position.getX() + dx, position.getY() + dy);
     }
 };
-
+    // ShapeList class
 class ShapeList
 {
 private:
-    vector<Shape *> shapes;
+    vector<Shape *> shapes; // vector of shapes
 
 public:
-    ~ShapeList()
+    ~ShapeList() // destructor
     {
         for (auto shape : shapes)
         {
@@ -260,19 +274,19 @@ public:
         }
     }
 
-    void addShape(Shape *shape)
+    void addShape(Shape *shape) // addShape function
     {
         shapes.push_back(shape);
     }
 
-    Shape *getShape(int index)
+    Shape *getShape(int index) // getShape function
     {
         if (index < 0 || index >= shapes.size())
             throw out_of_range("Index out of range");
         return shapes[index];
     }
 
-    void removeShape(int index)
+    void removeShape(int index) // removeShape function
     {
         if (index < 0 || index >= shapes.size())
             throw out_of_range("Index out of range");
@@ -280,11 +294,10 @@ public:
         shapes.erase(shapes.begin() + index);
     }
 
-    void display() const
-    {
-        for (const auto *shape : shapes)
-        {
-            cout << shape->display() << endl;
+       void display() const {
+        cout << "Displaying all shapes with their index:" << endl;
+        for (size_t i = 0; i < shapes.size(); ++i) {
+            cout << "Index " << i << ": " << shapes[i]->display() << endl;
         }
     }
 
@@ -315,7 +328,7 @@ public:
         int choice = 0;
         do
         {
-            cout << "Shape Management System:" << endl;
+            cout << "\n Shape Management System: \n" << endl;
             cout << "1: Add a shape" << endl;
             cout << "2: Remove a shape by position" << endl;
             cout << "3: Get information about a shape by position" << endl;
@@ -323,7 +336,7 @@ public:
             cout << "5: Display information of all the shapes" << endl;
             cout << "6: Translate all the shapes" << endl;
             cout << "7: Scale all the shapes" << endl;
-            cout << "0: Quit program" << endl;
+            cout << "0: Quit program \n" << endl;
             cout << "Enter your choice: ";
             cin >> choice;
             switch (choice)
@@ -360,8 +373,8 @@ public:
 
     void addShape() {
         int shapeType;
-
         cout << "Select the type of shape to add:" << endl;
+
         cout << "1. Rectangle" << endl;
         cout << "2. Square" << endl;
         cout << "3. Circle" << endl;
@@ -371,14 +384,16 @@ public:
 
 
         int x, y;
-        cout << "Enter the x and y coordinates of the shape's position: ";
-        cin >> x >> y;
+        if (shapeType != 4) {
+            cout << "Enter the x and y coordinates of the shape's position (seperated by space): ";
+            cin >> x >> y;
+        }
         Coordinate position(x, y);
 
         switch (shapeType) {
             case 1: {
                 int width, length;
-                cout << "Enter the width and length of the rectangle: ";
+                cout << "Enter the width and length of the rectangle (seperated by space): ";
                 cin >> width >> length;
                 Shape* rectangle = new Rectangle(position, width, length);
                 shapeList.addShape(rectangle);
@@ -403,7 +418,7 @@ public:
             }
 
             case 4: {
-                cout << "Enter the coordinates for the three verticies of the trieangle:" << endl;
+                cout << "Enter the coordinates for the three verticies of the triangle:" << endl;
                 int x1, y1, x2, y2, x3, y3;
                 cout << "Vertex 1 - X: "; cin >> x1;
                 cout << "Vertex 1 - Y: "; cin >> y1;
@@ -411,8 +426,8 @@ public:
                 cout << "Vertex 2 - Y: "; cin >> y2;
                 cout << "Vertex 3 - X: "; cin >> x3;
                 cout << "Vertex 3 - Y: "; cin >> y3;
-                Coordinate v1(x1, y1), v2(x2, y2), v3(x3, y3);
-                Shape* triangle = new Triangle(v1, v2, v3);
+                // Coordinate v1(x1, y1), v2(x2, y2), v3(x3, y3);
+                Shape* triangle = new Triangle(Coordinate(x1, y1), Coordinate(x2, y2), Coordinate(x3, y3));
                 shapeList.addShape(triangle);
                 break;
             }
@@ -425,14 +440,14 @@ public:
     void removeShape()
     {
         int index;
-        cout << "Enter the position of the shape to remove: ";
+        cout << "Enter the index of the shape to remove: ";
         cin >> index;
         try
         {
             shapeList.removeShape(index);
-            cout << "Shape at position " << index << " removed." << endl;
+            cout << "Shape at index " << index << " removed." << endl;
         }
-        catch (const std::out_of_range &e)
+        catch (const out_of_range &e)
         {
             cout << "Error: " << e.what() << endl;
         }
@@ -448,7 +463,7 @@ public:
             Shape *shape = shapeList.getShape(index);
             cout << shape->display() << endl;
         }
-        catch (const std::out_of_range &e)
+        catch (const out_of_range &e)
         {
             cout << "Error: " << e.what() << endl;
         }
@@ -465,7 +480,7 @@ public:
             cout << "Area: " << shape->getArea() << endl;
             cout << "Perimeter: " << shape->getPerimeter() << endl;
         }
-        catch (const std::out_of_range &e)
+        catch (const out_of_range &e)
         {
             cout << "Error: " << e.what() << endl;
         }
@@ -501,3 +516,4 @@ int main()
     manager.mainMenu();
     return 0;
 }
+
