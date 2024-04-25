@@ -274,7 +274,7 @@ public:
         }
     }
 
-    void addShape(Shape *shape) // addShape function
+    void addShape(Shape *shape) // addShape function,
     {
         shapes.push_back(shape);
     }
